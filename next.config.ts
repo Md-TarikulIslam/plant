@@ -1,15 +1,16 @@
-import type { NextConfig } from 'next'
-import withPWAInit from 'next-pwa'
+// next.config.ts
+import type { NextConfig } from 'next';
+import withPWA from 'next-pwa';
 
-const withPWA = withPWAInit({
+const withPWAConfig = withPWA({
   dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development', // disable in dev
-})
+});
 
 const nextConfig: NextConfig = {
-  reactStrictMode: true,
+  /* config options here */
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -30,14 +31,8 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'lh3.googleusercontent.com', // allow Google profile photos
-        port: '',
-        pathname: '/**',
-      },
     ],
   },
-}
+};
 
-export default withPWA(nextConfig)
+export default withPWAConfig(nextConfig);

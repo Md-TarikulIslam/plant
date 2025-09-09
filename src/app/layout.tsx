@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { AppShell } from "@/components/app-shell";
 import { Toaster } from "@/components/ui/toaster";
-import "./globals.css";
 import { AuthProvider } from "@/context/auth-context";
+import type { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "PlantOrg",
   description: "Identify plants from images",
+  manifest: "../public/manifest.json",
 };
 
 export default function RootLayout({
