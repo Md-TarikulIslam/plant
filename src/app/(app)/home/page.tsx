@@ -222,7 +222,7 @@ export default function HomePage() {
     <div className="p-4 flex flex-col items-center justify-center h-full relative">
       <video
         ref={videoRef}
-        className="w-full aspect-video rounded-md"
+        className="w-full aspect-[3/4] h-full rounded-md object-cover"
         autoPlay
         muted
         playsInline
@@ -392,7 +392,7 @@ export default function HomePage() {
       </div>
       {confidence !== undefined && (
         <div className="flex items-center gap-2">
-          <Progress value={confidence * 100} className="w-full h-2" />
+          <Progress value={confidence * 100} className="w-full h-2 bg-gray-200" />
           <span className="text-xs text-muted-foreground w-12 text-right">
             {Math.round(confidence * 100)}%
           </span>
