@@ -7,7 +7,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "PlantOrg",
   description: "Identify plants from images",
-  manifest: "../public/manifest.json",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
