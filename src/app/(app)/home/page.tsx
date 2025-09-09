@@ -211,7 +211,7 @@ export default function HomePage() {
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        capture="environment"
+        // capture="environment"
         onChange={handleImageChange}
         className="hidden"
       />

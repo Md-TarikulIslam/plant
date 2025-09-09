@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 export default function HistoryPage() {
   const { history, removeHistoryItem, clearHistory } = useHistoryStore();
 
+  console.log('History:', history);
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">

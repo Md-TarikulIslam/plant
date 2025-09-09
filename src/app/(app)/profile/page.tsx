@@ -54,7 +54,7 @@ export default function ProfilePage() {
       await user.reload();
     }
   };
-  console.log(user);
+ 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold font-headline mb-4 text-center">
