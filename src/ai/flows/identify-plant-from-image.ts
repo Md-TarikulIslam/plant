@@ -43,52 +43,17 @@ const IdentifyPlantFromImageOutputSchema = z.object({
     .describe(
       'The overall health status of the plant (e.g., healthy, diseased). If not a plant, return "N/A".'
     ),
-  disease: z
-    .string()
-    .optional()
-    .describe(
-      'The name of the disease if the plant is unhealthy, or "None" if healthy. If not a plant, return "N/A".'
-    ),
-  isEdible: z
-    .boolean()
-    .optional()
-    .describe("Whether the plant is edible for humans."),
-  edibilityDetails: z
-    .string()
-    .optional()
-    .describe(
-      'Details about edibility or toxicity for humans. If not a plant, return "N/A".'
-    ),
-  medicinalUses: z
-    .string()
-    .optional()
-    .describe(
-      'Description of medicinal uses, or "None" if not used in medicine. If not a plant, return "N/A".'
-    ),
-  confidenceScores: z
-    .object({
-      plantName: z
-        .number()
-        .describe("Confidence score for the plant name identification (0-1)."),
-      organName: z
-        .number()
-        .describe("Confidence score for the organ name identification (0-1)."),
-      speciesName: z
-        .number()
-        .describe(
-          "Confidence score for the species name identification (0-1)."
-        ),
-      healthStatus: z
-        .number()
-        .describe(
-          "Confidence score for the health status identification (0-1)."
-        ),
-      isPlant: z.number().describe("Confidence score for isPlant check (0-1)."),
-    })
-    .optional()
-    .describe(
-      "Confidence scores for each identified attribute, ranging from 0 to 1."
-    ),
+  disease: z.string().nullish().describe('The name of the disease if the plant is unhealthy, or "None" if healthy. If not a plant, return "N/A".'),
+  isEdible: z.boolean().nullish().describe('Whether the plant is edible for humans.'),
+  edibilityDetails: z.string().nullish().describe('Details about edibility or toxicity for humans. If not a plant, return "N/A".'),
+  medicinalUses: z.string().nullish().describe('Description of medicinal uses, or "None" if not used in medicine. If not a plant, return "N/A".'),
+  confidenceScores: z.object({
+    plantName: z.number().optional().describe('Confidence score for the plant name identification (0-1).'),
+    organName: z.number().optional().describe('Confidence score for the organ name identification (0-1).'),
+    speciesName: z.number().optional().describe('Confidence score for the species name identification (0-1).'),
+    healthStatus: z.number().optional().describe('Confidence score for the health status identification (0-1).'),
+    isPlant: z.number().optional().describe('Confidence score for isPlant check (0-1).'),
+  }).partial().optional().describe('Confidence scores for each identified attribute, ranging from 0 to 1.'),
 });
 export type IdentifyPlantFromImageOutput = z.infer<
   typeof IdentifyPlantFromImageOutputSchema
