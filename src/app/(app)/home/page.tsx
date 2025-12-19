@@ -22,7 +22,7 @@ import {
   Sparkles,
   Sprout,
   Upload,
-  Video
+  Video,
 } from "lucide-react";
 import Image from "next/image";
 import type { ChangeEvent } from "react";
@@ -285,94 +285,151 @@ export default function HomePage() {
   const renderResult = () =>
     result && (
       <div className="p-4 animate-in fade-in duration-500">
-        <h1 className="text-2xl font-bold font-headline mb-4 text-center">
-          Identification Complete
-        </h1>
-        {imagePreview && (
-          <Image
-            src={imagePreview}
-            alt="Identified plant"
-            width={360}
-            height={360}
-            className="rounded-lg object-cover aspect-square w-full mb-4 shadow-lg"
-            data-ai-hint="plant leaf"
-          />
-        )}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-primary" />
-              AI Analysis Results
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4 text-sm">
-            <ResultItem
-              label="Plant Name"
-              value={result.plantName}
-              confidence={result.confidenceScores?.plantName}
-            />
-            <ResultItem
-              label="Species"
-              value={result.speciesName}
-              confidence={result.confidenceScores?.speciesName}
-            />
-            <ResultItem
-              label="Organ"
-              value={result.organName}
-              confidence={result.confidenceScores?.organName}
-            />
-            <ResultItem
-              label="Health Status"
-              value={result.healthStatus}
-              confidence={result.confidenceScores?.healthStatus}
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="mt-4">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bot className="w-6 h-6 text-primary" />
-              Ask about this plant
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form
-              onSubmit={handleAskQuestion}
-              className="flex items-start gap-2"
-            >
-              <Textarea
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                placeholder="e.g., How often should I water it?"
-                className="flex-1"
-                rows={1}
+        {!result.isPlant ? (
+          <div className="flex flex-col gap-4">
+            <Alert variant="destructive">
+              <AlertTitle>No Plant Detected</AlertTitle>
+              <AlertDescription>
+                The image does not appear to contain a plant or flower. Please
+                try again with a clear image of a plant.
+              </AlertDescription>
+            </Alert>
+            <Button onClick={resetState} className="w-full" variant="outline">
+              Try Again
+            </Button>
+          </div>
+        ) : (
+          <>
+            <h1 className="text-2xl font-bold font-headline mb-4 text-center">
+              Identification Complete
+            </h1>
+            {imagePreview && (
+              <Image
+                src={imagePreview}
+                alt="Identified plant"
+                width={360}
+                height={360}
+                className="rounded-lg object-cover aspect-square w-full mb-4 shadow-lg"
+                data-ai-hint="plant leaf"
               />
-              <Button
-                type="submit"
-                size="icon"
-                disabled={isAnswering || !question}
-              >
-                {isAnswering ? <Loader2 className="animate-spin" /> : <Send />}
-              </Button>
-            </form>
-            {isAnswering && (
-              <div className="mt-4 flex items-center gap-2 text-muted-foreground">
-                <Loader2 className="animate-spin w-4 h-4" />
-                <span>Thinking...</span>
-              </div>
             )}
-            {answer && (
-              <div className="mt-4 text-sm p-3 bg-secondary rounded-lg">
-                {answer}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="w-6 h-6 text-primary" />
+                  AI Analysis Results
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4 text-sm">
+                <ResultItem
+                  label="Plant Name"
+                  value={result.plantName}
+                  confidence={result.confidenceScores?.plantName}
+                />
+                <ResultItem
+                  label="Species"
+                  value={result.speciesName}
+                  confidence={result.confidenceScores?.speciesName}
+                />
+                <ResultItem
+                  label="Organ"
+                  value={result.organName}
+                  confidence={result.confidenceScores?.organName}
+                />
+                <ResultItem
+                  label="Health Status"
+                  value={result.healthStatus}
+                  confidence={result.confidenceScores?.healthStatus}
+                />
+                {result.disease &&
+                  result.disease !== "None" &&
+                  result.disease !== "N/A" && (
+                    <ResultItem label="Disease" value={result.disease} />
+                  )}
+                <ResultItem
+                  label="Edibility"
+                  value={result.isEdible ? "Yes" : "No"}
+                />
+                {result.edibilityDetails &&
+                  result.edibilityDetails !== "N/A" && (
+                    <div className="space-y-1">
+                      <span className="font-semibold text-foreground block">
+                        Edibility Details
+                      </span>
+                      <p className="text-muted-foreground">
+                        {result.edibilityDetails}
+                      </p>
+                    </div>
+                  )}
+                {result.medicinalUses &&
+                  result.medicinalUses !== "None" &&
+                  result.medicinalUses !== "N/A" && (
+                    <div className="space-y-1">
+                      <span className="font-semibold text-foreground block">
+                        Medicinal Uses
+                      </span>
+                      <p className="text-muted-foreground">
+                        {result.medicinalUses}
+                      </p>
+                    </div>
+                  )}
+              </CardContent>
+            </Card>
 
-        <Button onClick={resetState} className="w-full mt-4" variant="outline">
-          Identify Another Plant
-        </Button>
+            <Card className="mt-4">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bot className="w-6 h-6 text-primary" />
+                  Ask about this plant
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form
+                  onSubmit={handleAskQuestion}
+                  className="flex items-start gap-2"
+                >
+                  <Textarea
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    placeholder="e.g., How often should I water it?"
+                    className="flex-1"
+                    rows={1}
+                  />
+                  <Button
+                    type="submit"
+                    size="icon"
+                    disabled={isAnswering || !question}
+                  >
+                    {isAnswering ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <Send />
+                    )}
+                  </Button>
+                </form>
+                {isAnswering && (
+                  <div className="mt-4 flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="animate-spin w-4 h-4" />
+                    <span>Thinking...</span>
+                  </div>
+                )}
+                {answer && (
+                  <div className="mt-4 text-sm p-3 bg-secondary rounded-lg">
+                    {answer}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Button
+              onClick={resetState}
+              className="w-full mt-4"
+              variant="outline"
+            >
+              Identify Another Plant
+            </Button>
+          </>
+        )}
       </div>
     );
 
@@ -392,7 +449,10 @@ export default function HomePage() {
       </div>
       {confidence !== undefined && (
         <div className="flex items-center gap-2">
-          <Progress value={confidence * 100} className="w-full h-2 bg-gray-200" />
+          <Progress
+            value={confidence * 100}
+            className="w-full h-2 bg-gray-200"
+          />
           <span className="text-xs text-muted-foreground w-12 text-right">
             {Math.round(confidence * 100)}%
           </span>
