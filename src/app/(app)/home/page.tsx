@@ -1,10 +1,6 @@
 "use client";
 
-import { answerQuestionsAboutPlant } from "@/ai/flows/answer-questions-about-plant";
-import {
-  identifyPlantFromImage,
-  type IdentifyPlantFromImageOutput,
-} from "@/ai/flows/identify-plant-from-image";
+import type { IdentifyPlantFromImageOutput } from "@/ai/flows/identify-plant-from-image";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -108,9 +104,20 @@ export default function HomePage() {
     setIsLoading(true);
     try {
       const photoDataUri = await toBase64(file);
-      const identificationResult = await identifyPlantFromImage({
-        photoDataUri,
+      
+      const response = await fetch("/api/identify-plant", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ photoDataUri }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to identify plant");
+      }
+
+      const identificationResult = await response.json();
       setResult(identificationResult);
       addHistoryItem({ ...identificationResult, imageUrl: photoDataUri });
     } catch (error) {
@@ -133,13 +140,25 @@ export default function HomePage() {
     setIsAnswering(true);
     setAnswer("");
     try {
-      const { answer } = await answerQuestionsAboutPlant({
-        plantName: result.plantName,
-        organName: result.organName,
-        speciesName: result.speciesName,
-        plantHealth: result.healthStatus,
-        question: question,
+      const response = await fetch("/api/answer-question", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          plantName: result.plantName,
+          organName: result.organName,
+          speciesName: result.speciesName,
+          plantHealth: result.healthStatus,
+          question: question,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to get answer");
+      }
+
+      const { answer } = await response.json();
       setAnswer(answer);
     } catch (error) {
       console.error(error);
